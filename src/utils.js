@@ -1,6 +1,6 @@
 import { flow, lowerFirst, memoize, trim } from "lodash";
-import parse5 from "parse5";
-import * as queryString from "query-string";
+import { parse } from "parse5";
+import { stringify } from "query-string";
 import {
   CITY_URL,
   COMMA_SEPARATOR,
@@ -16,19 +16,17 @@ const normalizeString = flow(trim, lowerFirst);
 
 const getNormalizedStrings = (strings) => strings.map(normalizeString);
 
-const objectFromCoordinates = (coordinates) => ({
-  degree: coordinates[0],
-  cardinal: coordinates[1],
+const objectFromCoordinateArray = ([degree, cardinal]) => ({
+  degree,
+  cardinal,
 });
 
 const getCoordinates = (rawCoordinate) => rawCoordinate.map(getCoordinate);
 
-const createGeoCoordinate = (coordinate) => {
-  const coordinates = {};
-  coordinates[coordinate[0].cardinal] = coordinate[0].degree;
-  coordinates[coordinate[1].cardinal] = coordinate[1].degree;
-  return coordinates;
-};
+const createGeoCoordinate = ([first, second]) => ({
+  [first.cardinal]: first.degree,
+  [second.cardinal]: second.degree,
+});
 
 const createCityURL = (queryParams) => `${CITY_URL}?${queryParams}`;
 
@@ -41,7 +39,7 @@ const resolvePromise = (promise) => promise.then(responseToJSON);
 const getCoordinate = flow(
   splitByDegree,
   getNormalizedStrings,
-  objectFromCoordinates
+  objectFromCoordinateArray
 );
 
 const getURLForCityName = flow(
@@ -49,7 +47,7 @@ const getURLForCityName = flow(
   splitByComma,
   getCoordinates,
   createGeoCoordinate,
-  queryString.stringify,
+  stringify,
   createCityURL,
   fetch,
   resolvePromise
@@ -57,7 +55,7 @@ const getURLForCityName = flow(
 
 const getURLSForCities = (tableHTML) => tableHTML.map(getURLForCityName);
 
-const memoizedGetURLsForCities  = memoize(getURLSForCities);
+const memoizedGetURLsForCities = memoize(getURLSForCities);
 
 const responseToText = (response) => response.text();
 
@@ -73,7 +71,7 @@ const compose = (...list) => (acc2) =>
 const getTableElement = compose(
   fetch,
   responseToText,
-  parse5.parse,
+  parse,
   findTable,
   getTableElementAsArray
 );
@@ -84,7 +82,10 @@ const findWindValue = (elem) => elem.childNodes[1].childNodes[0].value;
 
 const getWindCells = (table) => table.map(findWindValue);
 
-const getWeatherPromises = compose(memoizedGetTableHTML, memoizedGetURLsForCities);
+const getWeatherPromises = compose(
+  memoizedGetTableHTML,
+  memoizedGetURLsForCities
+);
 
 const getCities = async () => {
   const weatherPromises = await getWeatherPromises(WEATHER_URL);

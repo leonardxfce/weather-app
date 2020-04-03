@@ -6,13 +6,13 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
+    "lodash": "^4.14.1",
+    "parse5": "^5.0.2",
     "prettier": "^2.0.2",
+    "query-string": "latest",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-scripts": "3.4.1",
-    "parse5": "latest",
-    "query-string": "latest",
-    "lodash": "latest"
+    "react-scripts": "3.4.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -36,6 +36,8 @@
     ]
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.149",
+    "@types/parse5": "^5.0.2",
     "@types/prettier": "^1.19.1",
     "@types/react": "16.9.27",
     "@types/react-dom": "16.9.5"
