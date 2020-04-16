@@ -7,7 +7,7 @@
     "@testing-library/react": "^10.0.2",
     "@testing-library/user-event": "^7.1.2",
     "lodash": "^4.14.1",
-    "parse5": "^5.0.2",
+    "parse5": "^6.0.0",
     "prettier": "^2.0.2",
     "query-string": "latest",
     "react": "^16.13.1",
